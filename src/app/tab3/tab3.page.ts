@@ -46,8 +46,9 @@ export class Tab3Page {
 
   ionViewDidEnter(): void {
     this.requestPermissions();
-    this.getCurrentPosition();
-    this.createMap();
+    this.getCurrentInitialPosition().then(() => {
+      this.createMap();
+    });
   }
 
   async createMap(){
@@ -67,7 +68,7 @@ export class Tab3Page {
         zoom: 8,
       },
     });
-    this.addMarkers();
+    await this.addMarkers();
   }
 
   /* If it is the first time loading this tab, the map will not load correctly based on the user position.
@@ -107,7 +108,7 @@ export class Tab3Page {
     this.permission = permission
   }
 
-  async getCurrentPosition(){
+  async getCurrentInitialPosition(){
     const message = await this.toast.create({
       message: 'Finding location',
       position: 'top',
@@ -120,6 +121,23 @@ export class Tab3Page {
 
     this.latitude = currentLocation?.coords?.latitude;
     this.longitude = currentLocation?.coords?.longitude;
+  }
+
+  async getCurrentPosition(){
+    const message = await this.toast.create({
+      message: 'Finding location',
+      position: 'top',
+      duration: 2000
+    })
+
+    await message.present();
+
+    const currentLocation = await Geolocation.getCurrentPosition(this.options);
+
+    this.latitude = currentLocation?.coords?.latitude;
+    this.longitude = currentLocation?.coords?.longitude;
+    
+    await this.reloadPage();
   }
 
   watchPosition() {
@@ -143,7 +161,7 @@ export class Tab3Page {
 
         await toast.present(); 
       }
-      this.createMap();
+      await this.createMap();
     })
     this.watchId = watchId;
   }

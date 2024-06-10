@@ -23,7 +23,7 @@
 
  MVC é um padrão de design de software que ajuda a dividir/modularizar o desenvolvimento do software, no Model são representados os dados/regras de negócio, na View é representada a interface que o usuário interage com, e na Controller se cria a lógica da aplicação/software com os dados da Model. Aplicações em Angular são desenvolvidas utilizando esse conceito implicitamente.
 
- Ionic permite o desenvolvimento de aplicações híbridas, que podem rodam em Desktop, Web e Mobile. Porém ele é utilizado principalmente para apps mobile, combinado com Angular (também é possível utilizar o Ionic com o React ou Vue).
+ Ionic permite o desenvolvimento de aplicações híbridas, que podem rodar em Desktop, Web e Mobile. Porém ele é utilizado principalmente para apps mobile, combinado com Angular (também é possível utilizar o Ionic com o React ou Vue).
 
  A precedência dos databases foi definida em um fallback de SQLite -> IndexedDB -> Localstorage com Ionic Storage. O primeiro disponível no dispositivo/plataforma, na ordem de precedência do fallback, é utilizado.
 

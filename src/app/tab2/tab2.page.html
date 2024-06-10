@@ -1,0 +1,43 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>
+      List of Contacts
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-content [fullscreen]="true">
+  <ion-button class="search" *ngIf="searchButtons" (click)="showSearchBarName()">Search by name</ion-button>
+  <ion-button class="search" *ngIf="searchButtons" (click)="showSearchBarPhone()">Search by phone</ion-button>
+  <form *ngIf="searchBarName" [formGroup]="filterFormName">
+    <ion-item>
+      <ion-searchbar animated="true" placeholder="Search by name" formControlName="name"
+       (ionFocus)="emptyName()"></ion-searchbar>
+       <ion-button (click)="goBack()">Cancel</ion-button>
+    </ion-item>
+    <ion-item *ngIf="errorName" class="error">
+      Type above an user name that you want to find
+    </ion-item>
+  </form>
+  <form *ngIf="searchBarPhone" [formGroup]="filterFormPhone">
+    <ion-item>
+      <ion-searchbar animated="true" placeholder="Search by phone" formControlName="phone"
+       (ionFocus)="emptyPhone()"></ion-searchbar>
+       <ion-button (click)="goBack()">Cancel</ion-button>
+    </ion-item>
+    <ion-item *ngIf="errorPhone" class="error">
+      Type above an user phone that you want to find
+    </ion-item>
+  </form>
+  <ion-loading message="Loading..." [isOpen]="isLoading"></ion-loading>
+  <ion-button expand="block" (click)="createNew()">Create new</ion-button>
+  <cdk-virtual-scroll-viewport itemSize="56" minBufferPx="900" maxBufferPx="1350">
+    <ion-list>
+      <ion-item *cdkVirtualFor="let user of users
+        let isOdd=odd; let i=index;" [class.odd]="isOdd">
+        {{user.name}} - {{user.phone}} - {{user.email}}
+        <ion-button class="placeEdit" (click)="edit(user)">Edit</ion-button>
+        <ion-button class="placeDelete" (click)="delete(user)">Delete</ion-button>
+      </ion-item>
+    </ion-list>
+  </cdk-virtual-scroll-viewport>
+</ion-content>

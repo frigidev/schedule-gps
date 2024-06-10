@@ -1,0 +1,26 @@
+cdk-virtual-scroll-viewport {
+    height: calc(100% - 95px);
+    width: 100%;
+}
+
+.odd {
+    --ion-item-background: #ccc;
+}
+
+.error { 
+    color: #4D8DFF;
+    font-size: 11.8px;
+    font-weight: 600;
+}
+
+.search {
+    width:49%;
+}
+
+.placeDelete {
+    margin-left: 5%;
+}
+
+.placeEdit {
+    margin-left: 6%;
+}

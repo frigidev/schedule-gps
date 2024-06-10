@@ -1,0 +1,29 @@
+<ion-header>
+    <ion-toolbar *ngIf="modal">
+        <ion-buttons slot="start">
+            <ion-button color="medium" (click)="cancel()">Cancel</ion-button>
+        </ion-buttons>
+    </ion-toolbar>
+</ion-header>
+<ion-content class="ion-padding">
+    <form [formGroup]="formGroup" (ngSubmit)="save()">
+        <ion-item>
+            <ion-input error-Text="You can't save a name that doesn't begin with an uppercase
+             letter and doesn't contain between 2-25 characters" label="Name" formControlName="name"></ion-input>
+        </ion-item>
+        <ion-item>
+            <ion-input error-text="You can't save a phone number that doesn't contain between
+             9-13 digits" label="Phone" formControlName="phone"></ion-input>
+        </ion-item>
+        <ion-item>
+            <ion-input error-Text="Not a valid email" label="Email" formControlName="email"></ion-input>
+        </ion-item>
+        <ion-row>
+            <ion-col>
+                <ion-button type="submit" expand="block" [disabled]="!formGroup.valid">
+                    Save
+                </ion-button>
+            </ion-col>
+        </ion-row>
+    </form>
+</ion-content>

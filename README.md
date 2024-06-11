@@ -5,7 +5,7 @@
 
  Ionic allows to develop hibrid applications, that runs in Desktop, Web and Mobile. But he is mainly used for mobile apps, combined with Angular (it is possible to use with React or Vue aswell).
 
- The precedence of databases were defined in a fallback of SQLite -> IndexedDB -> Localstorage with Ionic Storage. The first one 
+ The precedence of databases was defined in a fallback of SQLite -> IndexedDB -> Localstorage with Ionic Storage. The first one 
  available in the device, in the fallback order, is used.
 
  # app content

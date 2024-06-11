@@ -1,7 +1,7 @@
 # schedule-gps
  Mobile Ionic app with Angular and SQLite using Ionic Storage.
 
- MVC is a design pattern that helps to divide/modularize the software development, in the Model that represents data/business rules, the View that represents the interface that the user interacts with, and the Controller that is used to create the logic of the application/software with the model's data. Applications in Angular are developed using this concept implicitly.
+ MVC is a design pattern that helps to divide/modularize the software development, in the Model that represents data/business rules, the View that represents the interface that the user interacts with, and the Controller that is used to create the logic of the application/software with the model's data. Applications in Angular are developed using a variant of this concept implicitly.
 
  Ionic allows to develop hibrid applications, that runs in Desktop, Web and Mobile. But he is mainly used for mobile apps, combined with Angular (it is possible to use with React or Vue aswell).
 
@@ -21,7 +21,7 @@
  # schedule-gps
  Aplicativo mobile Ionic/Angular e SQLite usando Ionic Storage.
 
- MVC é um padrão de design de software que ajuda a dividir/modularizar o desenvolvimento do software, no Model são representados os dados/regras de negócio, na View é representada a interface que o usuário interage com, e na Controller se cria a lógica da aplicação/software com os dados da Model. Aplicações em Angular são desenvolvidas utilizando esse conceito implicitamente.
+ MVC é um padrão de design de software que ajuda a dividir/modularizar o desenvolvimento do software, no Model são representados os dados/regras de negócio, na View é representada a interface que o usuário interage com, e na Controller se cria a lógica da aplicação/software com os dados da Model. Aplicações em Angular são desenvolvidas utilizando uma variante desse conceito implicitamente.
 
  Ionic permite o desenvolvimento de aplicações híbridas, que podem rodar em Desktop, Web e Mobile. Porém ele é utilizado principalmente para apps mobile, combinado com Angular (também é possível utilizar o Ionic com o React ou Vue).
 

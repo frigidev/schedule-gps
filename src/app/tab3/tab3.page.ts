@@ -7,7 +7,6 @@ import { GoogleMap, Marker } from '@capacitor/google-maps';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-tab3',
@@ -24,7 +23,7 @@ export class Tab3Page {
 
   latitude: number | undefined = 0.0;
   longitude: number | undefined = 0.0;
-  permission: PermissionStatus | undefined
+  permission: PermissionStatus | undefined;
 
   watchId: any;
 
@@ -40,42 +39,77 @@ export class Tab3Page {
   constructor(
     private readonly toast: ToastController,
     private readonly zone: NgZone,
-    private navCtrl: NavController,
-    private routes: Router
+    private navCtrl: NavController
   ) {}
 
   ionViewDidEnter(): void {
     this.requestPermissions();
-    this.getCurrentPosition();
-    this.createMap();
-  }
+    this.getCurrentInitialPosition().then(() => {
+      this.createNewMap();
+    }).catch(error => console.error(error));
+  };
 
   async createMap(){
     if(this.control){
       return;
     }
-    this.map = await GoogleMap.create({
-      id: 'map-gps',
-      apiKey: environment.mapsKey!,
-      element: this.mapRef.nativeElement,
-      forceCreate: true,
-      config: {
-        center: {
-          lat: this.latitude!,
-          lng: this.longitude!,
+    try{
+      this.map = await GoogleMap.create({
+        id: 'map-gps',
+        apiKey: environment.mapsKey!,
+        element: this.mapRef.nativeElement,
+        forceCreate: true,
+        config: {
+          center: {
+            lat: this.latitude!,
+            lng: this.longitude!,
+          },
+          zoom: 8,
         },
-        zoom: 8,
-      },
-    });
-    this.addMarkers();
-  }
+      });
+      await this.addMarkers();
+    }catch(e){
+      const toast = this.toast.create({
+        header: 'Error',
+        message: `Error creating the map: ${e}`,
+        duration: 3000,
+        position: 'top'
+      });
+    };
+  };
+
+  async createNewMap(){
+    try{
+      this.map = await GoogleMap.create({
+        id: 'map-gps',
+        apiKey: environment.mapsKey!,
+        element: this.mapRef.nativeElement,
+        forceCreate: true,
+        config: {
+          center: {
+            lat: this.latitude!,
+            lng: this.longitude!,
+          },
+          zoom: 8,
+        },
+      });
+      await this.addMarkers();
+    }catch(e){
+      const toast = this.toast.create({
+        header: 'Error',
+        message: `Error creating the map: ${e}`,
+        duration: 3000,
+        position: 'top'
+      });
+    };
+  };
 
   /* If it is the first time loading this tab, the map will not load correctly based on the user position.
     This function below navigate to an auxiliary route and guarantee that the map will be loaded correctly,
     otherwhise, an error message is displayed*/
-  async reloadPage() {
+  async reloadPage(){
     this.firstMapLoad = false;
-    await this.routes.navigateByUrl('/tabs/aux-route', {skipLocationChange: true}).then(() => {
+    await this.navCtrl.navigateRoot('/tabs/aux-route', {skipLocationChange: true}).then(() => {
       this.navCtrl.navigateForward('/tabs/tab3', {replaceUrl: true});
     }).catch(async err => {
         const message = await this.toast.create({
@@ -83,11 +117,10 @@ export class Tab3Page {
           message: `Error loading the map: ${err}`,
           duration: 4000,
           position: 'top'
-        })
-        
-        await message.present()
+        });
+        await message.present();
     });
-  }  
+  };
 
   async addMarkers(){
     const markers: Marker[] = [
@@ -100,60 +133,88 @@ export class Tab3Page {
       }
     ];
     await this.map.addMarkers(markers);
-  }
+  };
 
   async requestPermissions(){
     const permission = await Geolocation.requestPermissions();
-    this.permission = permission
-  }
+    this.permission = permission;
+  };
 
-  async getCurrentPosition(){
+  async getCurrentInitialPosition(){
     const message = await this.toast.create({
       message: 'Finding location',
       position: 'top',
       duration: 2000
-    })
-    
+    });
+
     await message.present();
     
     const currentLocation = await Geolocation.getCurrentPosition(this.options);
 
     this.latitude = currentLocation?.coords?.latitude;
     this.longitude = currentLocation?.coords?.longitude;
-  }
+  };
 
-  watchPosition() {
+  async getCurrentPosition(){
+    const message = await this.toast.create({
+      message: 'Finding location',
+      position: 'top',
+      duration: 2000
+    });
+
+    await message.present();
+
+    const currentLocation = await Geolocation.getCurrentPosition(this.options);
+
+    this.latitude = currentLocation?.coords?.latitude;
+    this.longitude = currentLocation?.coords?.longitude;  
+
+    this.reloadPage().then(() => {
+      this.createMap();
+    });
+  };
+
+  watchPosition(){
     if(this.watchId){
       return;
-    }
+    };
     if(this.control){
       this.control = false;
-    }
+    };
     const watchId = Geolocation.watchPosition(this.options, async(coordinates, err) => {
       this.zone.run(() => {
         this.latitude = coordinates?.coords.latitude
         this.longitude = coordinates?.coords.longitude
-      })
+      });
 
       if(err){
         const toast = await this.toast.create({
           message: `${err}`,
           duration: 3000
-        })
+        });
 
         await toast.present(); 
-      }
-      this.createMap();
-    })
+      };
+      await this.createMap();
+    });
     this.watchId = watchId;
-  }
+  };
 
-  clearWatch() {
+  clearWatch(){
     if(this.watchId){
-      Geolocation.clearWatch({id: this.watchId});
+      try{
+        Geolocation.clearWatch({id: this.watchId});
 
-      this.watchId = null;
-      this.control = true;
-    }
-  }
-}
+        this.watchId = null;
+        this.control = true;
+      }catch(e){
+        const toast = this.toast.create({
+          header: 'Error',
+          message: `Error stopping GPS: ${e}`,
+          duration: 3000,
+          position: 'top'
+        });
+      };
+    };
+  };
+};

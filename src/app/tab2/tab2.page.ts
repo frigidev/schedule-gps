@@ -140,8 +140,8 @@ export class Tab2Page {
       this.userService.list().then(data => {
         if(data){
           this.users = data;
-          this.isLoading = false;
         }
+        this.isLoading = false;
       })
     }, 500)
   }

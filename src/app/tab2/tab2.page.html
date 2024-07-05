@@ -7,7 +7,7 @@
 </ion-header>
 <ion-content [fullscreen]="true">
   <ion-button class="search search-name" *ngIf="searchButtons" (click)="showSearchBarName()">Search by name</ion-button>
-  <ion-button class="search search-phone" *ngIf="searchButtons" (click)="showSearchBarPhone()">Search by phone</ion-button>
+  <ion-button class="search" *ngIf="searchButtons" (click)="showSearchBarPhone()">Search by phone</ion-button>
   <form *ngIf="searchBarName" [formGroup]="filterFormName">
     <ion-item>
       <ion-searchbar animated="true" placeholder="Search by name" formControlName="name"

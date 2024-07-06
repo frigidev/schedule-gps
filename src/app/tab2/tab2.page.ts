@@ -9,6 +9,8 @@ import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { debounceTime, distinctUntilChanged, Subscription } from 'rxjs';
 import { ScrollingModule } from '@angular/cdk/scrolling';
 import { UserForm } from '../components/user-form';
+import { addIcons } from 'ionicons';
+import { atOutline, callOutline, happyOutline } from 'ionicons/icons';
 
 @Component({
   selector: 'app-tab2',
@@ -25,7 +27,9 @@ export class Tab2Page {
     private fb: FormBuilder,
     private toastController: ToastController,
     private modalController: ModalController
-  ) {}
+  ) {
+    addIcons({ atOutline, callOutline, happyOutline });
+  }
 
   users: User[] = [];
 

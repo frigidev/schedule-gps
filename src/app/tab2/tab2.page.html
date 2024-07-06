@@ -34,7 +34,11 @@
     <ion-list>
       <ion-item *cdkVirtualFor="let user of users
         let isOdd=odd; let i=index;" [class.odd]="isOdd">
-        {{user.name}} - {{user.phone}} - {{user.email}}
+        <span>
+          <ion-icon aria-hidden="true" name="happy-outline"></ion-icon> {{user.name}} <br>
+          <ion-icon aria-hidden="true" name="call-outline"></ion-icon> {{user.phone}} <br>
+          <ion-icon aria-hidden="true" name="at-outline"></ion-icon> {{user.email}} 
+        </span>
         <ion-button class="placeEdit" (click)="edit(user)">Edit</ion-button>
         <ion-button class="placeDelete" (click)="delete(user)">Delete</ion-button>
       </ion-item>

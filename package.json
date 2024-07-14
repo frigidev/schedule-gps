@@ -33,7 +33,9 @@
     "@capacitor/status-bar": "^5.0.0",
     "@ionic/angular": "^8.2.0",
     "@ionic/storage-angular": "^4.0.0",
+    "@types/node": "^20.14.10",
     "cordova-sqlite-storage": "^6.1.0",
+    "dotenv-webpack": "^8.1.0",
     "ionicons": "^7.2.1",
     "localforage-cordovasqlitedriver": "^1.8.0",
     "rxjs": "~7.8.0",
@@ -41,6 +43,7 @@
     "zone.js": "~0.14.2"
   },
   "devDependencies": {
+    "@angular-builders/custom-webpack": "^17.0.2",
     "@angular-devkit/build-angular": "^17.0.0",
     "@angular-eslint/builder": "^17.0.0",
     "@angular-eslint/eslint-plugin": "^17.0.0",

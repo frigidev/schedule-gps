@@ -7,6 +7,7 @@ import { GoogleMap, Marker } from '@capacitor/google-maps';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import { CommonModule } from '@angular/common';
+import { Capacitor } from '@capacitor/core';
 
 @Component({
   selector: 'app-tab3',
@@ -43,11 +44,38 @@ export class Tab3Page {
   ) {}
 
   ionViewDidEnter(): void {
-    this.requestPermissions();
-    this.getCurrentInitialPosition().then(() => {
-      this.createNewMap();
-    }).catch(error => console.error(error));
+    if (Capacitor.isNativePlatform()) {
+      this.requestPermissions();
+      this.getCurrentInitialPosition().then(() => {
+        this.createNewMap();
+      }).catch(error => console.error(error));
+    } else {
+      this.getBrowserLocation().then(() => {
+        this.createNewMap(); 
+      });
+    }
   };
+
+  async getBrowserLocation() {
+    try {
+      const position = await new Promise<GeolocationPosition>((resolve, reject) => {
+        navigator.geolocation.getCurrentPosition(resolve, reject);
+      });
+
+      this.zone.run(() => {
+        this.latitude = position.coords.latitude;
+        this.longitude = position.coords.longitude;
+      });
+    } catch (error) {
+      console.error('Error getting location:', error);
+      const toast = await this.toast.create({
+        message: 'Error getting the location. Verify the permissions of your browser.',
+        duration: 3000,
+        position: 'top'
+      });
+      toast.present();
+    }
+  }
 
   async createMap(){
     if(this.control){
@@ -135,86 +163,108 @@ export class Tab3Page {
     await this.map.addMarkers(markers);
   };
 
-  async requestPermissions(){
-    const permission = await Geolocation.requestPermissions();
-    this.permission = permission;
+  async requestPermissions() {
+    if (Capacitor.isNativePlatform()) {
+      const permission = await Geolocation.requestPermissions();
+      this.permission = permission;
+    }
   };
 
   async getCurrentInitialPosition(){
-    const message = await this.toast.create({
-      message: 'Finding location',
-      position: 'top',
-      duration: 2000
-    });
-
-    await message.present();
-    
-    const currentLocation = await Geolocation.getCurrentPosition(this.options);
-
-    this.latitude = currentLocation?.coords?.latitude;
-    this.longitude = currentLocation?.coords?.longitude;
+    if(Capacitor.isNativePlatform()) {
+      const message = await this.toast.create({
+        message: 'Finding location',
+        position: 'top',
+        duration: 2000
+      });
+  
+      await message.present();
+      
+      const currentLocation = await Geolocation.getCurrentPosition(this.options);
+  
+      this.latitude = currentLocation?.coords?.latitude;
+      this.longitude = currentLocation?.coords?.longitude;
+    }
   };
 
   async getCurrentPosition(){
-    const message = await this.toast.create({
-      message: 'Finding location',
-      position: 'top',
-      duration: 2000
-    });
-
-    await message.present();
-
-    const currentLocation = await Geolocation.getCurrentPosition(this.options);
-
-    this.latitude = currentLocation?.coords?.latitude;
-    this.longitude = currentLocation?.coords?.longitude;  
-
-    this.reloadPage().then(() => {
-      this.createMap();
-    });
+    if(Capacitor.isNativePlatform()) {
+      const message = await this.toast.create({
+        message: 'Finding location',
+        position: 'top',
+        duration: 2000
+      });
+  
+      await message.present();
+  
+      const currentLocation = await Geolocation.getCurrentPosition(this.options);
+  
+      this.latitude = currentLocation?.coords?.latitude;
+      this.longitude = currentLocation?.coords?.longitude;  
+  
+      this.reloadPage().then(() => {
+        this.createMap();
+      });
+    }
   };
 
   watchPosition(){
-    if(this.watchId){
-      return;
-    };
-    if(this.control){
-      this.control = false;
-    };
-    const watchId = Geolocation.watchPosition(this.options, async(coordinates, err) => {
-      this.zone.run(() => {
-        this.latitude = coordinates?.coords.latitude
-        this.longitude = coordinates?.coords.longitude
+    if (Capacitor.isNativePlatform()) {
+      if(this.watchId){
+        return;
+      };
+      if(this.control){
+        this.control = false;
+      };
+      const watchId = Geolocation.watchPosition(this.options, async(coordinates, err) => {
+        this.zone.run(() => {
+          this.latitude = coordinates?.coords.latitude
+          this.longitude = coordinates?.coords.longitude
+        });
+  
+        if(err){
+          const toast = await this.toast.create({
+            message: `${err}`,
+            duration: 3000
+          });
+  
+          await toast.present(); 
+        };
+        await this.createMap();
       });
+      this.watchId = watchId;
+    } else {
+        if (this.watchId) {
+          return; 
+        }
 
-      if(err){
-        const toast = await this.toast.create({
-          message: `${err}`,
-          duration: 3000
-        });
-
-        await toast.present(); 
-      };
-      await this.createMap();
-    });
-    this.watchId = watchId;
+        this.watchId = navigator.geolocation.watchPosition(
+          (position) => {
+            this.zone.run(() => {
+              this.latitude = position.coords.latitude;
+              this.longitude = position.coords.longitude;
+            });
+          },
+          (error) => {
+            console.error('Error monitoring location:', error);
+          },
+          this.options
+        );
+    }
   };
 
-  clearWatch(){
-    if(this.watchId){
-      try{
-        Geolocation.clearWatch({id: this.watchId});
-
-        this.watchId = null;
+  clearWatch() {
+    if (Capacitor.isNativePlatform()) {
+      if (this.watchId) {
+        Geolocation.clearWatch({ id: this.watchId });
+        this.watchId = undefined;
         this.control = true;
-      }catch(e){
-        const toast = this.toast.create({
-          header: 'Error',
-          message: `Error stopping GPS: ${e}`,
-          duration: 3000,
-          position: 'top'
-        });
-      };
-    };
+      }
+    } else {
+      if (this.watchId) {
+        navigator.geolocation.clearWatch(this.watchId);
+        this.watchId = undefined;
+      }
+    }
   };
-};
+}

@@ -3,8 +3,8 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-  production: false,
-  mapsKey: 'YOUR_GOOGLE_MAPS_API_TOKEN_HERE',
+  production: true,
+  mapsKey: process.env['API_KEY'] || "",
 };
 
 /*
